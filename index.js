@@ -1,33 +1,13 @@
 // https://enterprise.github.com/downloads/en/markdown-cheatsheet.pdf
 
 const inquirer = require("inquirer");
-const fs= require("fs")
+const fs= require("fs");
+const util = require("util");
 
+const writeFileAsync = util.promisify(fs.writeFile);
 
-
-const generatemardown = ({ username, email, project, descrip, license, install, test, usingrepo, contributing }) => {
-    return (
-        `
-        
-# ProjectTitle: ${data.title}
-
-## Table Of Contents
-*[Installation]${data.install}
-*[License]${data.license}
-* [Description](#description)
-
-
-
-
-* [Contact](#contact)
-### Description
-${description}
-
-        `)
-
-}
-// questions to ask the user 
-let questions = [
+// questions to the user 
+const questions = () =>
 inquirer
     .prompt([
         {
@@ -84,15 +64,41 @@ inquirer
             name: ' contributing',
         }
 
-    ])
-];
+    ]);
 
-    .then(answers => {
-        return htmlPageContent = generateHTML(answers);
+//const generatemardown = ({ username, email, project, descrip, license, install, test, usingrepo, contributing }) => {}
+  
+function generateMarkdown(data){
+    return
+    `    
+# ProjectTitle: ${data.title}
+${data.description}
 
-    }).then((response) =>
+## Table Of Contents
+*[Installation](#installation)
+*[Usage](#usingrepo)
+*[License](#license)
+*[Contributing](#contributing)
+*[Tests](#test)
+*[Questions](#questions)
+### Installation:
+\`\`\`${data.installations}\`\`\`
+### Usage:
+${data.usingrepo}
+### License:
+This project is licensed under:
+${data.license}
+### Contributing:
+${data.contributing}
+### Tests:
+\`\`\`${data.test}\`\`\`
+### Questions:
+If you have any questions contact me on [GitHub](https://github.com/${data.email}) or contact${data.username} , ${data.email}.
+`
+}
 
-        fs.writeFile('index.html', response, (err) => {
-            err ? console.log(err) : console.log('You created a HTML')
-        }
-        ))
+questions()
+.then ((data) => writeFileAsync('generatedREADME.md',generateMarkdown(data)))
+.then(() => console.log('Successfully wrote to index.html'))
+.catch((err)=> console.error(err));
+
