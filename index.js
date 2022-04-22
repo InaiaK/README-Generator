@@ -8,8 +8,7 @@ const writeFileAsync = util.promisify(fs.writeFile);
 
 // questions to the user 
 const questions = () =>
-inquirer
-    .prompt([
+inquirer.prompt([
         {
             type: 'input',
             message: 'What is your GitHub username?',
@@ -82,7 +81,7 @@ ${data.description}
 *[Tests](#test)
 *[Questions](#questions)
 ### Installation:
-\`\`\`${data.installations}\`\`\`
+\`\`\`${data.install}\`\`\`
 ### Usage:
 ${data.usingrepo}
 ### License:
@@ -98,7 +97,7 @@ If you have any questions contact me on [GitHub](https://github.com/${data.email
 }
 
 questions()
-.then ((data) => writeFileAsync('generatedREADME.md',generateMarkdown(data)))
+.then ((data) => writeFileAsync('generatedREADME.md','generateMarkdown(data)'))
 .then(() => console.log('Successfully wrote to index.html'))
 .catch((err)=> console.error(err));
 
