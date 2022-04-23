@@ -4,7 +4,12 @@ const inquirer = require("inquirer");
 const fs= require("fs");
 const util = require("util");
 
-const writeFileAsync = util.promisify(fs.writeFile);
+const writeFileAsync = (filename,content) => {
+    fs.writeFileSync(filename,content,function(err){
+        if(err)console.error(err)
+    })
+    return true
+}
 
 // questions to the user 
 const questions = () =>
@@ -22,13 +27,13 @@ inquirer.prompt([
         {
             type: 'input',
             message: `What is your project's name?`,
-            name: 'project'
+            name: 'title'
         },
 
         {
             type: 'input',
             message: 'Please write a short description of your project? ',
-            name: 'descrip',
+            name: 'description',
         },
         {
             type: 'list',
@@ -45,23 +50,23 @@ inquirer.prompt([
         {
             type: 'input',
             message: 'What command should be run to install dependencies?',
-            name: ' install',
+            name: 'install',
         },
         {
             type: 'input',
             message: 'What command should be run to rub tests?',
-            name: ' test',
+            name: 'test',
         },
 
         {
             type: 'input',
             message: 'What does the user need to know about using the repo?',
-            name: ' usingrepo',
+            name: 'usingrepo',
         },
         {
             type: 'input',
             message: 'What does the user need to know about contributing to the repo?',
-            name: ' contributing',
+            name: 'contributing',
         }
 
     ]);
@@ -69,8 +74,7 @@ inquirer.prompt([
 //const generatemardown = ({ username, email, project, descrip, license, install, test, usingrepo, contributing }) => {}
   
 function generateMarkdown(data){
-    return
-    `    
+    return   `    
 # ProjectTitle: ${data.title}
 ${data.description}
 
@@ -98,7 +102,8 @@ If you have any questions contact me on [GitHub](https://github.com/${data.email
 }
 
 questions()
-.then ((data) => writeFileAsync('generatedREADME.md','generateMarkdown(data)'))
+.then ((data) => generateMarkdown(data))
+.then( (data) => writeFileAsync('generatedREADME.md',data))
 .then(() => console.log('Successfully wrote to index.html'))
 .catch((err)=> console.error(err));
 
